@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Photoliz: a plain, slightly odd little digital camera. 108dp adaptive-icon canvas, 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- top plate -->
+    <path
+        android:fillColor="#8A8D91"
+        android:pathData="M37,33h14a2,2 0,0 1,2 2v4h-18v-4a2,2 0,0 1,2 -2z" />
+    <!-- shutter button -->
+    <path
+        android:fillColor="#D0D2D5"
+        android:pathData="M64,34.5h9a1,1 0,0 1,1 1v3.5h-11v-3.5a1,1 0,0 1,1 -1z" />
+    <!-- body -->
+    <path
+        android:fillColor="#B3B5B8"
+        android:pathData="M31,38h46a4,4 0,0 1,4 4v26a4,4 0,0 1,-4 4h-46a4,4 0,0 1,-4 -4v-26a4,4 0,0 1,4 -4z" />
+    <!-- leatherette band -->
+    <path
+        android:fillColor="#8A8D91"
+        android:pathData="M27,47h54v5h-54z" />
+    <!-- lens ring -->
+    <path
+        android:fillColor="#26282B"
+        android:pathData="M40,56a14,14 0,1 0,28 0a14,14 0,1 0,-28 0z" />
+    <!-- glass -->
+    <path
+        android:fillColor="#111214"
+        android:pathData="M44,56a10,10 0,1 0,20 0a10,10 0,1 0,-20 0z" />
+    <!-- reflection -->
+    <path
+        android:fillColor="#1C61B2"
+        android:pathData="M47,52a3,3 0,1 0,6 0a3,3 0,1 0,-6 0z" />
+    <!-- self-timer lamp -->
+    <path
+        android:fillColor="#D32F2F"
+        android:pathData="M72,44a2.5,2.5 0,1 0,5 0a2.5,2.5 0,1 0,-5 0z" />
+</vector>

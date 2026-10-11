@@ -1,0 +1,32 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/captures/
+android/.kotlin/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Xcode
+ios/build/
+ios/DerivedData/
+xcuserdata/
+*.xcuserstate
+*.xcarchive
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# CI output
+dist/

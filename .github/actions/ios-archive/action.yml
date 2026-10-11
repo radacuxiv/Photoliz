@@ -1,0 +1,80 @@
+name: iOS unsigned archive
+description: Selects Xcode, archives Photoliz without code signing and packages an unsigned IPA into dist/.
+
+inputs:
+  xcode:
+    description: Path of the Xcode app to use (the runner default is kept when the path does not exist).
+    required: true
+  label:
+    description: Suffix for the IPA file name.
+    required: true
+  require-minos:
+    description: Fail unless the binary's minimum iOS version equals this value (empty = no check).
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Select Xcode
+      shell: bash
+      run: |
+        if [ -d "${{ inputs.xcode }}" ]; then sudo xcode-select -s "${{ inputs.xcode }}"; fi
+        xcodebuild -version
+        xcodebuild -showsdks | grep -i iphoneos || true
+
+    - name: Version
+      shell: bash
+      run: |
+        if [[ "$GITHUB_REF" == refs/tags/v* ]]; then V="${GITHUB_REF_NAME#v}"; else V="1.0.0"; fi
+        echo "VERSION_NAME=$V" >> "$GITHUB_ENV"
+        echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+        echo "ARTIFACT_VERSION=$V-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+    - name: Check that the Xcode project matches the sources
+      shell: bash
+      run: |
+        python3 ios/tools/gen_xcodeproj.py
+        if ! git diff --exit-code -- ios/Photoliz.xcodeproj; then
+          echo "::error::ios/Photoliz.xcodeproj is out of date. Run 'python3 ios/tools/gen_xcodeproj.py' and commit the result."
+          exit 1
+        fi
+
+    - name: Archive (unsigned)
+      shell: bash
+      working-directory: ios
+      run: |
+        set -o pipefail
+        xcodebuild archive \
+          -project Photoliz.xcodeproj \
+          -scheme Photoliz \
+          -configuration Release \
+          -sdk iphoneos \
+          -destination 'generic/platform=iOS' \
+          -archivePath "$RUNNER_TEMP/Photoliz.xcarchive" \
+          MARKETING_VERSION="$VERSION_NAME" \
+          CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGN_IDENTITY="" \
+          -quiet
+
+    - name: Package unsigned IPA
+      shell: bash
+      run: |
+        set -euo pipefail
+        APP="$RUNNER_TEMP/Photoliz.xcarchive/Products/Applications/Photoliz.app"
+        test -d "$APP"
+        echo "Build info of the app binary:"
+        xcrun vtool -show-build "$APP/Photoliz" | tee "$RUNNER_TEMP/build-info.txt"
+        if [ -n "${{ inputs.require-minos }}" ]; then
+          if ! grep -Eq "minos +${{ inputs.require-minos }}( |$)" "$RUNNER_TEMP/build-info.txt"; then
+            echo "::error::The binary does not target iOS ${{ inputs.require-minos }}."
+            exit 1
+          fi
+        fi
+        rm -rf "$RUNNER_TEMP/ipa"
+        mkdir -p "$RUNNER_TEMP/ipa/Payload" "$GITHUB_WORKSPACE/dist"
+        cp -R "$APP" "$RUNNER_TEMP/ipa/Payload/"
+        (cd "$RUNNER_TEMP/ipa" && zip -qry "$GITHUB_WORKSPACE/dist/Photoliz-$ARTIFACT_VERSION-${{ inputs.label }}-unsigned.ipa" Payload)
+        ls -l "$GITHUB_WORKSPACE/dist"

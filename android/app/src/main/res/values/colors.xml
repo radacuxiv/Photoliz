@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Canonical palette -->
+    <color name="plz_bg">#FF111214</color>
+    <color name="plz_deep">#FF050505</color>
+    <color name="plz_body">#FFB3B5B8</color>
+    <color name="plz_body_dark">#FF8A8D91</color>
+    <color name="plz_body_light">#FFD0D2D5</color>
+    <color name="plz_accent">#FF1C61B2</color>
+    <color name="plz_alert">#FFD32F2F</color>
+    <color name="plz_surface">#FF26282B</color>
+</resources>
